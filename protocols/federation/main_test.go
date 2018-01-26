@@ -28,6 +28,17 @@ func TestMarshal(t *testing.T) {
 	value, err = json.Marshal(resp)
 	assert.NoError(t, err)
 	assert.Equal(t, `{"account_id":"GCQ4MQ4ZOS6P6RON4HH6FNWNABCLZUCNBSDE3QXFZOX5VYJDDKRQDQOJ","memo_type":"id","memo":"123"}`, string(value))
+
+	respWithSig := NameResponse{
+		Address:   "john*stellar.org",
+		AccountID: "GCQ4MQ4ZOS6P6RON4HH6FNWNABCLZUCNBSDE3QXFZOX5VYJDDKRQDQOJ",
+		MemoType:  "id",
+		Memo:      Memo{"123"},
+		Signature: "h=stellar_address:account_id:memo_type:memo;b=dGhpc2lzYXNpZ25hdHVyZQ==",
+	}
+	value, err = json.Marshal(respWithSig)
+	assert.NoError(t, err)
+	assert.Equal(t, `{"stellar_address":"john*stellar.org","account_id":"GCQ4MQ4ZOS6P6RON4HH6FNWNABCLZUCNBSDE3QXFZOX5VYJDDKRQDQOJ","memo_type":"id","memo":"123","signature":"h=stellar_address:account_id:memo_type:memo;b=dGhpc2lzYXNpZ25hdHVyZQ=="}`, string(value))
 }
 
 func TestUnmarshal(t *testing.T) {

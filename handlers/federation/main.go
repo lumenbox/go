@@ -53,9 +53,12 @@ type Handler struct {
 // Record represents the result from the database when performing a
 // federation request.
 type Record struct {
+	Name      string `db:"name"`
+	Domain    string `db:"domain"`
 	AccountID string `db:"id"`
 	MemoType  string `db:"memo_type"`
 	Memo      string `db:"memo"`
+	Signature string `db:"signature"`
 }
 
 // ReverseDriver represents a data source against which federation queries can
@@ -82,8 +85,10 @@ type ForwardDriver interface {
 // ReverseRecord represents the result from performing a "Reverse federation"
 // lookup, in which an Account ID is used to lookup an associated address.
 type ReverseRecord struct {
-	Name   string `db:"name"`
-	Domain string `db:"domain"`
+	Name      string `db:"name"`
+	Domain    string `db:"domain"`
+	AccountID string `db:"id"`
+	Signature string `db:"signature"`
 }
 
 // ReverseSQLDriver provides a `ReverseDriver` implementation based upon a SQL

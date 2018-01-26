@@ -76,9 +76,17 @@ func (h *Handler) lookupByID(w http.ResponseWriter, q string) {
 		return
 	}
 
-	h.writeJSON(w, proto.IDResponse{
+	resp := proto.IDResponse{
 		Address: address.New(rec.Name, rec.Domain),
-	}, http.StatusOK)
+	}
+
+	if rec.Signature != "" {
+		resp.AccountID = q
+		resp.Signature = rec.Signature
+	}
+
+	h.writeJSON(w, resp, http.StatusOK)
+
 }
 
 func (h *Handler) lookupByName(w http.ResponseWriter, q string) {
@@ -101,11 +109,19 @@ func (h *Handler) lookupByName(w http.ResponseWriter, q string) {
 		return
 	}
 
-	h.writeJSON(w, proto.NameResponse{
+	resp := proto.NameResponse{
 		AccountID: rec.AccountID,
 		Memo:      proto.Memo{rec.Memo},
 		MemoType:  rec.MemoType,
-	}, http.StatusOK)
+	}
+
+	if rec.Signature != "" {
+		resp.Address = address.New(name, domain)
+		resp.Signature = rec.Signature
+	}
+
+	h.writeJSON(w, resp, http.StatusOK)
+
 }
 
 func (h *Handler) lookupByForward(w http.ResponseWriter, query url.Values) {
@@ -126,11 +142,19 @@ func (h *Handler) lookupByForward(w http.ResponseWriter, query url.Values) {
 		return
 	}
 
-	h.writeJSON(w, proto.NameResponse{
+	resp := proto.NameResponse{
 		AccountID: rec.AccountID,
 		Memo:      proto.Memo{rec.Memo},
 		MemoType:  rec.MemoType,
-	}, http.StatusOK)
+	}
+
+	if rec.Signature != "" {
+		resp.Address = address.New(rec.Name, rec.Domain)
+		resp.Signature = rec.Signature
+	}
+
+	h.writeJSON(w, resp, http.StatusOK)
+
 }
 
 func (h *Handler) writeJSON(

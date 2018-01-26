@@ -8,15 +8,19 @@ import (
 // NameResponse represents the result of a federation request
 // for `name` and `forward` requests.
 type NameResponse struct {
+	Address   string `json:"stellar_address,omitempty"`
 	AccountID string `json:"account_id"`
 	MemoType  string `json:"memo_type,omitempty"`
 	Memo      Memo   `json:"memo,omitempty"`
+	Signature string `json:"signature,omitempty"`
 }
 
 // IDResponse represents the result of a federation request
 // for `id` request.
 type IDResponse struct {
-	Address string `json:"stellar_address"`
+	Address   string `json:"stellar_address"`
+	AccountID string `json:"account_id,omitempty"`
+	Signature string `json:"signature,omitempty"`
 }
 
 // Memo value can be either integer or string in JSON. This struct

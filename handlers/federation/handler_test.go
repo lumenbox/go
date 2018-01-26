@@ -138,6 +138,88 @@ func TestHandler(t *testing.T) {
 
 }
 
+func TestHandlerWithSignature(t *testing.T) {
+	db := dbtest.Postgres(t).Load(`
+    CREATE TABLE people (id character varying, name character varying, domain character varying, memo character varying, signature character varying, signature_rev character varying);
+    INSERT INTO people (id, name, domain, memo, signature, signature_rev) VALUES
+      ('GD2GJPL3UOK5LX7TWXOACK2ZPWPFSLBNKL3GTGH6BLBNISK4BGWMFBBG', 'scott', 'stellar.org', 'scottsmemo', 'scottssignature', 'scottssignaturerev'),
+      ('GCYMGWPZ6NC2U7SO6SMXOP5ZLXOEC5SYPKITDMVEONLCHFSCCQR2J4S3', 'bartek', 'stellar.org', 'barteksmemo', '', '');
+  `)
+	defer db.Close()
+
+	driver := &ReverseSQLDriver{
+		SQLDriver: SQLDriver{
+			DB:                db.Open().DB,
+			Dialect:           db.Dialect,
+			LookupRecordQuery: "SELECT id, memo, 'text' as memo_type, signature FROM people WHERE name = ? AND domain = ?",
+		},
+		LookupReverseRecordQuery: "SELECT name, domain, signature_rev as signature FROM people WHERE id = ?",
+	}
+
+	defer driver.DB.Close()
+
+	handler := &Handler{driver}
+	server := httptest.NewServer(t, handler)
+	defer server.Close()
+
+	// Good name request and respond with signature
+	server.GET("/federation").
+		WithQuery("type", "name").
+		WithQuery("q", "scott*stellar.org").
+		Expect().
+		Status(http.StatusOK).
+		JSON().Object().
+		ContainsKey("account_id").
+		ValueEqual("account_id", "GD2GJPL3UOK5LX7TWXOACK2ZPWPFSLBNKL3GTGH6BLBNISK4BGWMFBBG").
+		ContainsKey("stellar_address").
+		ValueEqual("stellar_address", "scott*stellar.org").
+		ContainsKey("memo").
+		ValueEqual("memo", "scottsmemo").
+		ContainsKey("signature").
+		ValueEqual("signature", "scottssignature")
+
+	// Good name request and respond without signature
+	server.GET("/federation").
+		WithQuery("type", "name").
+		WithQuery("q", "bartek*stellar.org").
+		Expect().
+		Status(http.StatusOK).
+		JSON().Object().
+		ContainsKey("account_id").
+		ValueEqual("account_id", "GCYMGWPZ6NC2U7SO6SMXOP5ZLXOEC5SYPKITDMVEONLCHFSCCQR2J4S3").
+		NotContainsKey("stellar_address").
+		ContainsKey("memo").
+		ValueEqual("memo", "barteksmemo").
+		NotContainsKey("signature")
+
+	// Good reverse request and response with signature
+	server.GET("/federation").
+		WithQuery("type", "id").
+		WithQuery("q", "GD2GJPL3UOK5LX7TWXOACK2ZPWPFSLBNKL3GTGH6BLBNISK4BGWMFBBG").
+		Expect().
+		Status(http.StatusOK).
+		JSON().Object().
+		ContainsKey("account_id").
+		ValueEqual("account_id", "GD2GJPL3UOK5LX7TWXOACK2ZPWPFSLBNKL3GTGH6BLBNISK4BGWMFBBG").
+		ContainsKey("stellar_address").
+		ValueEqual("stellar_address", "scott*stellar.org").
+		ContainsKey("signature").
+		ValueEqual("signature", "scottssignaturerev")
+
+	// Good reverse request and response without signature
+	server.GET("/federation").
+		WithQuery("type", "id").
+		WithQuery("q", "GCYMGWPZ6NC2U7SO6SMXOP5ZLXOEC5SYPKITDMVEONLCHFSCCQR2J4S3").
+		Expect().
+		Status(http.StatusOK).
+		JSON().Object().
+		NotContainsKey("account_id").
+		ContainsKey("stellar_address").
+		ValueEqual("stellar_address", "bartek*stellar.org").
+		NotContainsKey("signature")
+
+}
+
 func TestNameHandler(t *testing.T) {
 	db := dbtest.Postgres(t).Load(`
     CREATE TABLE people (id character varying, name character varying, domain character varying);
