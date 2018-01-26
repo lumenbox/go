@@ -76,9 +76,17 @@ func (h *Handler) lookupByID(w http.ResponseWriter, q string) {
 		return
 	}
 
-	h.writeJSON(w, proto.IDResponse{
+	resp := proto.IDResponse{
 		Address: address.New(rec.Name, rec.Domain),
-	}, http.StatusOK)
+	}
+
+	if rec.Signature != "" {
+		resp.AccountID = q
+		resp.Signature = rec.Signature
+	}
+
+	h.writeJSON(w, resp, http.StatusOK)
+
 }
 
 func (h *Handler) lookupByName(w http.ResponseWriter, q string) {
