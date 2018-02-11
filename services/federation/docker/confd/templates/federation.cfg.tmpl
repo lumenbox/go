@@ -1,0 +1,14 @@
+port = {{getv "/federation/port"}}
+
+[database]
+type = "{{getv "/federation/db/type"}}"
+dsn = "host={{getv "/federation/db/host"}} user={{getv "/federation/db/user"}} password={{getv "/federation/db/password"}} dbname={{getv "/federation/db/name"}} sslmode={{getv "/federation/db/sslmode"}}"
+
+[queries]
+federation = "{{getv "/federation/query"}}"
+reverse-federation = "{{getv "/federation/reverse/query"}}"
+
+[tls]
+certificate-file = "{{getv "/federation/cert/path"}}"
+private-key-file = "{{getv "/federation/key/path"}}"
+

@@ -1,0 +1,16 @@
+[template]
+src = "federation.cfg.tmpl"
+dest = "/federation.cfg"
+keys = [
+    "/federation/db/password",
+    "/federation/db/user",
+    "/federation/port",
+    "/federation/db/type",
+    "/federation/db/host",
+    "/federation/db/name",
+    "/federation/db/sslmode",
+    "/federation/query",
+    "/federation/reverse/query",
+    "/federation/cert/path",
+    "/federation/key/path",
+]
