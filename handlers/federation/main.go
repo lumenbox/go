@@ -85,10 +85,8 @@ type ForwardDriver interface {
 // ReverseRecord represents the result from performing a "Reverse federation"
 // lookup, in which an Account ID is used to lookup an associated address.
 type ReverseRecord struct {
-	Name      string `db:"name"`
-	Domain    string `db:"domain"`
-	AccountID string `db:"id"`
-	Signature string `db:"signature"`
+	Name   string `db:"name"`
+	Domain string `db:"domain"`
 }
 
 // ReverseSQLDriver provides a `ReverseDriver` implementation based upon a SQL
