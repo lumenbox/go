@@ -34,11 +34,11 @@ func TestMarshal(t *testing.T) {
 		AccountID: "GCQ4MQ4ZOS6P6RON4HH6FNWNABCLZUCNBSDE3QXFZOX5VYJDDKRQDQOJ",
 		MemoType:  "id",
 		Memo:      Memo{"123"},
-		Signature: "h=stellar_address:account_id:memo_type:memo;b=dGhpc2lzYXNpZ25hdHVyZQ==",
+		Signature: "uUq9eNXRWb6gV0mStLf8WJA5RlUI2grVCD+D+LcrASzURWfmlAxqE2TPp2zGJSyiVqC8UCNkALHr3+ZZRvQoBg==",
 	}
 	value, err = json.Marshal(respWithSig)
 	assert.NoError(t, err)
-	assert.Equal(t, `{"stellar_address":"john*stellar.org","account_id":"GCQ4MQ4ZOS6P6RON4HH6FNWNABCLZUCNBSDE3QXFZOX5VYJDDKRQDQOJ","memo_type":"id","memo":"123","signature":"h=stellar_address:account_id:memo_type:memo;b=dGhpc2lzYXNpZ25hdHVyZQ=="}`, string(value))
+	assert.Equal(t, `{"stellar_address":"john*stellar.org","account_id":"GCQ4MQ4ZOS6P6RON4HH6FNWNABCLZUCNBSDE3QXFZOX5VYJDDKRQDQOJ","memo_type":"id","memo":"123","signature":"uUq9eNXRWb6gV0mStLf8WJA5RlUI2grVCD+D+LcrASzURWfmlAxqE2TPp2zGJSyiVqC8UCNkALHr3+ZZRvQoBg=="}`, string(value))
 }
 
 func TestUnmarshal(t *testing.T) {
