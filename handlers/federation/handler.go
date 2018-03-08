@@ -8,7 +8,7 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/stellar/go/address"
-	proto "github.com/stellar/go/protocols/federation"
+	proto "github.com/lumenbox/stellar-go/tree/go1/protocols/federation"
 	"github.com/stellar/go/support/log"
 )
 
