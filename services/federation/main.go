@@ -9,7 +9,7 @@ import (
 
 	"github.com/rs/cors"
 	"github.com/spf13/cobra"
-	"github.com/lumenbox/stellar-go/tree/go1/handlers/federation"
+	"github.com/lumenbox/stellar-go/handlers/federation"
 	"github.com/stellar/go/support/app"
 	"github.com/stellar/go/support/config"
 	"github.com/stellar/go/support/db"
